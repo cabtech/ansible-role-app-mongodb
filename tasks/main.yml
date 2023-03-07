@@ -1,0 +1,52 @@
+---
+# --------------------------------
+
+- name: "MongoDB dependencies"
+  ansible.builtin.apt:
+    name: "{{ mongodb_pkg_dependencies }}"
+    state: present
+  become: true
+  tags: [ct-mongodb]
+
+- name: "Signing key of MongoDB repo"
+  ansible.builtin.apt_key:
+    state: "{{ mongodb_state }}"
+    url: "{{ mongodb_signing_url }}"
+    validate_certs: true
+  become: true
+  tags: [ct-mongodb]
+
+- name: "APT repository"
+  ansible.builtin.apt_repository:
+    filename: mongodb-org-6.0.list
+    repo: "{{ mongodb_repo_path }}"
+    state: "{{ mongodb_state }}"
+    update_cache: true
+    validate_certs: true
+  become: true
+  register: reg_apt
+  tags: [ct-mongodb]
+
+- name: "MongoDB package"
+  ansible.builtin.apt:
+    name: "{{ mongodb_pkg_name }}"
+    state: "{{ mongodb_state }}"
+    update_cache: "{{ reg_apt is changed }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+  register: reg_package
+  become: true
+  tags: [ct-mongodb]
+
+- name: "MongoDB service"
+  ansible.builtin.systemd:
+    daemon_reload: "{{ reg_package is changed }}"
+    enabled: "{{ mongodb_svc_enabled }}"
+    name: "{{ mongodb_svc_name }}"
+    state: "{{ mongodb_svc_state }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+  become: true
+  tags: [ct-mongodb]
+  # sudo systemctl daemon-reload
+
+# --------------------------------
+...

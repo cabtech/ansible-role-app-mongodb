@@ -1,0 +1,7 @@
+---
+exclude_paths:
+- ../playbooks
+skip_list:
+- jinja[invalid]
+- yaml[indentation]
+...

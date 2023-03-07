@@ -1,0 +1,19 @@
+---
+# --------------------------------
+#  https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu
+
+mongodb_keyserver: "hkp://keyserver.ubuntu.com"
+mongodb_pkg_dependencies: ["apt-transport-https", "gnupg", "python3-pymongo"]
+mongodb_pkg_name: mongodb-org  # NOT mongodb (Ubuntu maintained version)
+mongodb_repo_path: "deb [ arch=amd64,arm64 ] {{ mongodb_repo_url }} jammy/mongodb-org/6.0 multiverse"
+mongodb_repo_url: "https://repo.mongodb.org/apt/ubuntu"
+# mongodb_signing_key: "E162F504A20CDF15827F718D4B7C549A058F8B6B"
+mongodb_signing_url: "https://www.mongodb.org/static/pgp/server-6.0.asc"
+mongodb_state: present
+
+mongodb_svc_enabled: true
+mongodb_svc_name: mongod
+mongodb_svc_state: started
+
+# --------------------------------
+...
