@@ -10,10 +10,6 @@ lint: .ylint .alint
 
 # --------------------------------
 
-push:
-	@mkdir -p /mnt/hgfs/shared/ansible-role-app-mongodb
-	rsync -a .config .gitignore [A-z]* /mnt/hgfs/shared/ansible-role-app-mongodb
-
 clean:
 	@/bin/rm -f .alint .ylint
 
