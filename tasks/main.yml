@@ -1,12 +1,29 @@
 ---
 # --------------------------------
 
+- name: "Include variables wrapper"
+  ansible.builtin.include_tasks:
+    file: variables.yml
+  tags: ["ct-mongodb"]
+
+- name: "Disto/Family tasks (FF)"
+  ansible.builtin.include_tasks:
+    file: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+      - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'].split('.')[0] }}.yml"
+      - "{{ ansible_facts['distribution'] }}.yml"
+      - "{{ ansible_facts['os_family'] }}.yml"
+      - "default.yml"
+  tags: ["ct-mongodb"]
+
 - name: "MongoDB dependencies"
   ansible.builtin.apt:
     name: "{{ mongodb_pkg_dependencies }}"
     state: present
   become: true
-  tags: [ct-mongodb]
+  tags: ["ct-mongodb"]
 
 - name: "Signing key of MongoDB repo"
   ansible.builtin.apt_key:
@@ -14,7 +31,7 @@
     url: "{{ mongodb_signing_url }}"
     validate_certs: true
   become: true
-  tags: [ct-mongodb]
+  tags: ["ct-mongodb"]
 
 - name: "APT repository"
   ansible.builtin.apt_repository:
@@ -25,7 +42,7 @@
     validate_certs: true
   become: true
   register: reg_apt
-  tags: [ct-mongodb]
+  tags: ["ct-mongodb"]
 
 - name: "MongoDB package"
   ansible.builtin.apt:
@@ -35,7 +52,7 @@
   ignore_errors: "{{ ansible_check_mode }}"
   register: reg_package
   become: true
-  tags: [ct-mongodb]
+  tags: ["ct-mongodb"]
 
 - name: "MongoDB service"
   ansible.builtin.systemd:
@@ -45,7 +62,7 @@
     state: "{{ mongodb_svc_state }}"
   ignore_errors: "{{ ansible_check_mode }}"
   become: true
-  tags: [ct-mongodb]
+  tags: ["ct-mongodb"]
   # sudo systemctl daemon-reload
 
 # --------------------------------
